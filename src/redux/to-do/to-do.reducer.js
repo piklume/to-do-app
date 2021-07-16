@@ -1,5 +1,5 @@
 import ToDoActionTypes from './to-do.types';
-import { addToDoToDone } from './to-do.utils';
+import { addToDoToDone,addToDoItem } from './to-do.utils';
 
 const INITIAL_STATE = {
     toDoList: [
@@ -55,7 +55,7 @@ const toDoReducer = (state= INITIAL_STATE, action) => {
         case ToDoActionTypes.ADD_TODO_ITEM:
             return {
                 ...state,
-                toDoList: [...state.toDoList, action.payload]
+                toDoList: addToDoItem(state.toDoList, action.payload)
             };
         case ToDoActionTypes.REMOVE_TODO_ITEM:
             return {
@@ -65,6 +65,11 @@ const toDoReducer = (state= INITIAL_STATE, action) => {
         case ToDoActionTypes.ADD_TODO_TO_DONE:
             return {
                 ...addToDoToDone(state, action.payload)
+            }
+        case ToDoActionTypes.REMOVE_DONE_ITEM:
+            return {
+                ...state,
+                doneList: state.doneList.filter(done => done.id !== action.payload.id)
             }
         default:
             return state;

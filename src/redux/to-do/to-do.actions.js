@@ -29,3 +29,10 @@ export const addToDoToDone = toDoItem => ({
     payload: toDoItem
 });
 
+export const removeDoneItem = doneItem => ({
+    type: ToDoActionTypes.REMOVE_DONE_ITEM,
+    payload: doneItem
+});
+
+
+

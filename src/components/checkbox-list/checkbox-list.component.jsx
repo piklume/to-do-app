@@ -12,7 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import DeleteIcon from '@material-ui/icons/Delete';
 
-import { addToDoToDone } from '../../redux/to-do/to-do.actions';
+import { addToDoToDone,removeToDoItem } from '../../redux/to-do/to-do.actions';
 import { selectToDoList } from '../../redux/to-do/to-do.selectors';
 
 const useStyles = makeStyles(() => ({
@@ -23,7 +23,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function CheckboxList({ toDoList,addToDoToDone }) {
+function CheckboxList({ toDoList,addToDoToDone,removeToDoItem }) {
   const classes = useStyles();
   const [checked, setChecked] = React.useState([0]);
 
@@ -42,7 +42,13 @@ function CheckboxList({ toDoList,addToDoToDone }) {
     addToDoToDone(value);
   };
 
+  const handleDelete = (value) => () => {
+    //   console.log(value);
+      removeToDoItem(value);
+  }
+
   return (
+    (toDoList.length>0) ?
     <List className={classes.root}>
       {toDoList.map((value) => {
         //    console.log(value);
@@ -61,7 +67,7 @@ function CheckboxList({ toDoList,addToDoToDone }) {
             </ListItemIcon>
             <ListItemText id={labelId} primary={value.body} />
             <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="delete">
+              <IconButton edge="end" aria-label="delete" onClick={handleDelete(value)}>
                 <DeleteIcon />
               </IconButton>
             </ListItemSecondaryAction>
@@ -69,6 +75,10 @@ function CheckboxList({ toDoList,addToDoToDone }) {
         );
       })}
     </List>
+    :
+    <div className='to-do-list-empty'>
+        <p>Nothing to do</p>
+    </div>
   );
 }
 
@@ -77,7 +87,8 @@ const mapStateToProps = createStructuredSelector({
 });
 
 const mapDispatchToProps = dispatch => ({
-    addToDoToDone: item => dispatch(addToDoToDone(item))
+    addToDoToDone: item => dispatch(addToDoToDone(item)),
+    removeToDoItem: item => dispatch(removeToDoItem(item))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CheckboxList);

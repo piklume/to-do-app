@@ -17,6 +17,7 @@ import UndoIcon from '@material-ui/icons/Undo';
 import './done-list.styles.scss';
 
 import { selectDoneList } from '../../redux/to-do/to-do.selectors';
+import { removeDoneItem,addToDoItem } from '../../redux/to-do/to-do.actions';
 
 const useStyles = makeStyles(() => ({
 root: {
@@ -27,12 +28,23 @@ root: {
 }));
 
 
-function InteractiveList({ doneList }) {
+function InteractiveList({ doneList,removeDoneItem,addToDoItem }) {
     // console.log(doneList);
   const classes = useStyles();
  
+  const handleDelete = (value) => () => {
+    // console.log(value);
+    removeDoneItem(value);
+    } 
+
+    const handleUndo = (value) => () => {
+        // console.log(value);
+        removeDoneItem(value);
+        addToDoItem(value);
+        } 
 
   return (
+        (doneList.length>0)?
         <List className={classes.root} dense={true}>   
             {
                doneList.map((value) => {
@@ -46,10 +58,10 @@ function InteractiveList({ doneList }) {
                         </ListItemAvatar>
                         <ListItemText className='done-list-item-text' primary={body} />
                         <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="undo">
+                            <IconButton edge="end" aria-label="undo" onClick={handleUndo(value)}>
                                 <UndoIcon />
                             </IconButton>
-                            <IconButton edge="end" aria-label="delete">
+                            <IconButton edge="end" aria-label="delete" onClick={handleDelete(value)}>
                                 <DeleteIcon />
                             </IconButton>
                         </ListItemSecondaryAction>
@@ -58,6 +70,10 @@ function InteractiveList({ doneList }) {
             }) 
             }  
         </List>
+        :
+        <div className='done-list-empty'>
+            <p>No tasks done yet</p>
+        </div>
   );
 }
 
@@ -65,4 +81,9 @@ const mapStateToProps = createStructuredSelector({
     doneList: selectDoneList
 });
 
-export default connect(mapStateToProps)(InteractiveList);
+const mapDispatchToProps = dispatch => ({
+    removeDoneItem: item => dispatch(removeDoneItem(item)),
+    addToDoItem: item => dispatch(addToDoItem(item)),
+})
+
+export default connect(mapStateToProps,mapDispatchToProps)(InteractiveList);
